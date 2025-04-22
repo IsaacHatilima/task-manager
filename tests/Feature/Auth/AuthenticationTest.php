@@ -1,34 +1,54 @@
 <?php
 
 use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
 
 test('login screen can be rendered', function () {
-    $response = $this->get('/login');
 
-    $response->assertStatus(200);
+    $this->get(route('login'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('auth/login')
+            ->where('errors', [])
+        );
 });
 
-test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
-
-    $response = $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
+test('user can login', function () {
+    $user = User::factory()->create([
+        'password' => Hash::make('Password1#'),
     ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $this->get(route('login'));
+
+    $this
+        ->followingRedirects()
+        ->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'Password1#',
+        ])
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('dashboard')
+            ->where('auth.user.email', $user->email)
+        );
 });
 
 test('users can not authenticate with invalid password', function () {
-    $user = User::factory()->create();
-
-    $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'wrong-password',
+    $user = User::factory()->create([
+        'password' => Hash::make('Password1#'),
     ]);
 
-    $this->assertGuest();
+    $this->get(route('login'));
+
+    $this
+        ->followingRedirects()
+        ->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'Password12#',
+        ])
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('auth/login')
+        );
 });
 
 test('users can logout', function () {

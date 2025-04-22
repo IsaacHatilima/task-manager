@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -23,7 +23,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])
         ->name('google.callback');
 
-    Route::get('/', [AuthenticatedSessionController::class, 'create'])
+    Route::get('/', [LoginController::class, 'create'])
         ->name('login');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
@@ -56,6 +56,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+    Route::post('logout', [LoginController::class, 'destroy'])
         ->name('logout');
 });
