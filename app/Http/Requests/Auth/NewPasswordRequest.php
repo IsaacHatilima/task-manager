@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
-class SetPasswordRequest extends FormRequest
+class NewPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,9 @@ class SetPasswordRequest extends FormRequest
      */
     public function rules(): array
     {
-        $user = auth()->user();
-
-        $rules = [
+        return [
+            'token' => 'required',
+            'email' => 'required|email',
             'password' => [
                 'required',
                 'confirmed',
@@ -42,11 +42,5 @@ class SetPasswordRequest extends FormRequest
                 'same:password',
             ],
         ];
-
-        if (! is_null($user->password)) {
-            $rules = array_merge($rules, ['current_password' => ['required', 'current_password']]);
-        }
-
-        return $rules;
     }
 }

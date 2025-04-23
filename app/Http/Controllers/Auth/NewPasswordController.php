@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Actions\Auth\SetPasswordAction;
+use App\Actions\Auth\NewPasswordAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\SetPasswordRequest;
+use App\Http\Requests\Auth\NewPasswordRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -30,7 +30,7 @@ class NewPasswordController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(SetPasswordRequest $request, SetPasswordAction $setPasswordAction): RedirectResponse
+    public function store(NewPasswordRequest $request, NewPasswordAction $setPasswordAction): RedirectResponse
     {
         $status = $setPasswordAction->execute($request);
 
