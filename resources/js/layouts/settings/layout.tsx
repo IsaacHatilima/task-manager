@@ -9,17 +9,22 @@ import { type PropsWithChildren } from 'react';
 const sidebarNavItems: NavItem[] = [
     {
         title: 'Profile',
-        href: '/settings/profile',
+        href: route('profile.edit'),
         icon: null,
     },
     {
         title: 'Password',
-        href: '/settings/password',
+        href: route('password.edit'),
+        icon: null,
+    },
+    {
+        title: 'Two Factor Authentication',
+        href: route('two-factor-authentication.edit'),
         icon: null,
     },
     {
         title: 'Appearance',
-        href: '/settings/appearance',
+        href: route('appearance'),
         icon: null,
     },
 ];
@@ -46,7 +51,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 variant="ghost"
                                 asChild
                                 className={cn('w-full justify-start', {
-                                    'bg-muted': currentPath === item.href,
+                                    'bg-muted': new URL(item.href, window.location.origin).pathname === currentPath,
                                 })}
                             >
                                 <Link href={item.href} prefetch>
@@ -59,8 +64,8 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
                 <Separator className="my-6 md:hidden" />
 
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">{children}</section>
+                <div className="w-full flex-1">
+                    <section className="w-full space-y-12 rounded-md border px-20 py-4">{children}</section>
                 </div>
             </div>
         </div>

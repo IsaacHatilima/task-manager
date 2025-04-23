@@ -37,4 +37,10 @@ class UserRepository
             $user->save();
         }
     }
+
+    public function updateDownloadedCodes(User $user, bool $downloaded): void
+    {
+        $user->downloaded_codes = $downloaded;
+        $user->save();
+    }
 }
