@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\Actions\Auth\ChangePasswordAction;
+use App\Actions\Settings\ChangePasswordAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\SetPasswordRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 

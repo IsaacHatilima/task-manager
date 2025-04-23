@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Models\Profile;
+use Illuminate\Support\Str;
 
 class ProfileRepository
 {
@@ -29,8 +30,8 @@ class ProfileRepository
     public function update(Profile $profile, array $data): void
     {
         $profile->update([
-            'first_name' => ucwords($data['first_name']),
-            'last_name' => ucwords($data['last_name']),
+            'first_name' => Str::title($data['first_name']),
+            'last_name' => Str::title($data['last_name']),
             'gender' => $data['gender'],
         ]);
     }

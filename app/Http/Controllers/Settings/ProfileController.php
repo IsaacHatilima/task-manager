@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Actions\Settings\DeleteProfileAction;
+use App\Actions\Settings\ProfileManagerAction;
+use App\Enums\GenderEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\CurrentPasswordRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,42 +24,28 @@ class ProfileController extends Controller
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'gender' => GenderEnum::getValues(),
         ]);
     }
 
     /**
      * Update the user's profile settings.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, ProfileManagerAction $profileManagerAction): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $profileManagerAction->execute($request->user(), $request);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        $request->user()->load('profile')->refresh();
 
-        $request->user()->save();
-
-        return to_route('profile.edit');
+        return back();
     }
 
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(CurrentPasswordRequest $request, DeleteProfileAction $deleteProfileAction): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $deleteProfileAction->execute($request);
 
         return redirect('/');
     }
