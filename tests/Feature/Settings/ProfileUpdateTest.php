@@ -63,7 +63,7 @@ test('profile information can be updated', function () {
         ])
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
-            ->component('settings/profile')
+            ->component('auth/verify-email')
             ->where('errors', [])
         );
 
