@@ -40,7 +40,7 @@ export default function Index() {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <CardTitle>Todos</CardTitle>
-                                <Create />
+                                <Create isMain={true} />
                             </div>
                             <CardDescription>List of your Todos</CardDescription>
                         </CardHeader>
@@ -71,7 +71,9 @@ export default function Index() {
                                                 {' '}
                                                 {todo.description.length > 80 ? `${todo.description.slice(0, 80)}...` : todo.description}
                                             </TableCell>
-                                            <TableCell className="text-right">Go</TableCell>
+                                            <TableCell className="text-right">
+                                                <Create isMain={false} />
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

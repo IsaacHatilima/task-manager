@@ -118,7 +118,7 @@ function TodoForm({ onSuccess }: TodoFormProps) {
     );
 }
 
-function Create() {
+function Create({ isMain }: { isMain: boolean }) {
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
     const title = 'Create Todo';
@@ -128,7 +128,7 @@ function Create() {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button>Create Todo</Button>
+                    {isMain ? <Button size="default">Create Todo</Button> : <h1 className="cursor-pointer text-sky-700 hover:underline">Edit</h1>}
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

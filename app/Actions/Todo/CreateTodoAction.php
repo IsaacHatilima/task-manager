@@ -27,6 +27,7 @@ class CreateTodoAction
                     'title' => Str::title($request->title),
                     'description' => $request->description,
                     'status' => strtolower($request->status),
+                    'user_id' => $request->user()->id,
                 ]);
             });
         } catch (Throwable $e) {
