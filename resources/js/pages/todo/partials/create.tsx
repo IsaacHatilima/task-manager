@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Todo } from '@/types/todo';
 import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 import { useForm, usePage } from '@inertiajs/react';
 import { toast } from 'sonner';
@@ -30,19 +31,28 @@ type TodoFormType = {
 
 type TodoFormProps = {
     onSuccess?: () => void;
+    todo?: Todo;
 };
 
-function TodoForm({ onSuccess }: TodoFormProps) {
+function TodoForm({ onSuccess, todo }: TodoFormProps) {
     const todoStatus: Array<string> = usePage().props.todoStatus as Array<string>;
-    const { data, setData, post, errors, processing } = useForm<Required<TodoFormType>>({
-        title: '',
-        description: '',
-        status: todoStatus[0],
+    const { data, setData, post, put, errors, processing } = useForm<Required<TodoFormType>>({
+        title: todo ? todo.title : '',
+        description: todo ? todo.description : '',
+        status: todo ? todo.status : todoStatus[0],
     });
 
-    const handleCreateTodo: FormEventHandler = (e) => {
+    const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
+        if (todo) {
+            handleUpdateTodo(todo);
+        } else {
+            handleCreateTodo(e);
+        }
+    };
+
+    const handleCreateTodo: FormEventHandler = () => {
         post(route('todos.store'), {
             preserveScroll: true,
             onSuccess: () => {
@@ -55,8 +65,21 @@ function TodoForm({ onSuccess }: TodoFormProps) {
         });
     };
 
+    const handleUpdateTodo = (todo: Todo) => {
+        put(route('todos.update', todo.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('Success', {
+                    description: 'Todo updated successfully',
+                });
+
+                if (onSuccess) onSuccess();
+            },
+        });
+    };
+
     return (
-        <form onSubmit={handleCreateTodo} className="grid items-start gap-4">
+        <form onSubmit={handleSubmit} className="grid items-start gap-4">
             <div className="grid gap-2">
                 <Label htmlFor="title">Title</Label>
 
@@ -118,7 +141,7 @@ function TodoForm({ onSuccess }: TodoFormProps) {
     );
 }
 
-function Create({ isMain }: { isMain: boolean }) {
+function Create({ isMain, todo }: { isMain: boolean; todo?: Todo }) {
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
     const title = 'Create Todo';
@@ -135,7 +158,7 @@ function Create({ isMain }: { isMain: boolean }) {
                         <DialogTitle>{title}</DialogTitle>
                         <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
-                    <TodoForm onSuccess={() => setOpen(false)} />
+                    <TodoForm onSuccess={() => setOpen(false)} todo={todo} />
                 </DialogContent>
             </Dialog>
         );
@@ -151,7 +174,7 @@ function Create({ isMain }: { isMain: boolean }) {
                     <DrawerTitle>{title}</DrawerTitle>
                     <DrawerDescription>{description}</DrawerDescription>
                 </DrawerHeader>
-                <TodoForm onSuccess={() => setOpen(false)} />
+                <TodoForm onSuccess={() => setOpen(false)} todo={todo} />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>

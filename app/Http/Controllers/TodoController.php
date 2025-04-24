@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Todo\CreateTodoAction;
+use App\Actions\Todo\UpdateTodoAction;
 use App\Enums\TodoStatusEnum;
 use App\Http\Requests\TodoRequest;
 use App\Models\Todo;
@@ -18,7 +19,7 @@ class TodoController extends Controller
         $this->authorize('viewAny', Todo::class);
 
         return Inertia::render('todo/index', [
-            'todos' => Todo::paginate(10),
+            'todos' => Todo::paginate(15),
             'todoStatus' => TodoStatusEnum::getValues(),
         ]);
     }
@@ -39,13 +40,13 @@ class TodoController extends Controller
         return $todo;
     }
 
-    public function update(TodoRequest $request, Todo $todo)
+    public function update(TodoRequest $request, Todo $todo, UpdateTodoAction $updateTodoAction)
     {
         $this->authorize('update', $todo);
 
-        $todo->update($request->validated());
+        $updateTodoAction->execute($todo, $request);
 
-        return $todo;
+        return back();
     }
 
     public function destroy(Todo $todo)

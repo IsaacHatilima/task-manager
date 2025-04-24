@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('todos', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->string('title');
             $table->string('description');
             $table->string('status');

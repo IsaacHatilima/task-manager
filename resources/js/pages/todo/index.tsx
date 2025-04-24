@@ -72,7 +72,7 @@ export default function Index() {
                                                 {todo.description.length > 80 ? `${todo.description.slice(0, 80)}...` : todo.description}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Create isMain={false} />
+                                                <Create isMain={false} todo={todo} />
                                             </TableCell>
                                         </TableRow>
                                     ))}
