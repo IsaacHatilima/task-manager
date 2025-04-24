@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TodoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -9,6 +10,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     require __DIR__.'/settings.php';
+
+    Route::resource('todos', TodoController::class);
+
 });
 
 require __DIR__.'/auth.php';
