@@ -11,14 +11,28 @@ class DeleteTodoAction
 {
     public function __construct() {}
 
-    public function execute(Todo $todo): void
+    public function execute(Todo $todo)
     {
+        if (! $this->isPasswordRecentlyConfirmed()) {
+            return '401';
+        }
+
         try {
-            DB::transaction(function () use ($todo) {
+            return DB::transaction(function () use ($todo) {
                 $todo->delete();
             });
         } catch (Throwable $e) {
             Log::error($e);
+
+            return '500';
         }
+    }
+
+    protected function isPasswordRecentlyConfirmed(): bool
+    {
+        $timeout = config('auth.password_timeout');
+        $confirmedAt = session('password_confirmed_at');
+
+        return $confirmedAt && now()->diffInSeconds($confirmedAt) < $timeout;
     }
 }

@@ -14,6 +14,8 @@ class CustomPasswordConfirmationController extends Controller
      */
     public function confirm(CurrentPasswordRequest $request)
     {
+        session(['password_confirmed_at' => now()]);
+
         return back();
     }
 }

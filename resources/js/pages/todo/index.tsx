@@ -36,7 +36,7 @@ export default function Index() {
     const deletedTodoMessage: string = usePage().props.deletedTodoMessage as string;
 
     useEffect(() => {
-        if (deletedTodoMessage) {
+        if (deletedTodoMessage && deletedTodoMessage !== '401') {
             toast.success('Success', { description: deletedTodoMessage });
         }
     }, [deletedTodoMessage]);

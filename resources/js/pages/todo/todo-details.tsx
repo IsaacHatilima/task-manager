@@ -24,6 +24,7 @@ type TodoFormType = {
 
 function TodoDetails() {
     const todo: Todo = usePage().props.todo as Todo;
+
     const todoStatus: Array<string> = usePage().props.todoStatus as Array<string>;
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -59,6 +60,7 @@ function TodoDetails() {
 
     const handleUpdateTodo: FormEventHandler = (e) => {
         e.preventDefault();
+
         put(route('todos.update', todo.id), {
             preserveScroll: true,
             onSuccess: () => {
@@ -77,6 +79,10 @@ function TodoDetails() {
                     description: 'Todo Deleted successfully',
                 });
             },
+            onError: () => {
+                toast.warning('Warning', { description: 'Password confirmation expired. Try again' });
+            },
+            onCancel: () => {},
         });
     };
 

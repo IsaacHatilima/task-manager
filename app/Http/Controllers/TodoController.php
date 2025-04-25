@@ -23,7 +23,7 @@ class TodoController extends Controller
         $this->authorize('viewAny', Todo::class);
 
         return Inertia::render('todo/index', [
-            'todos' => Todo::paginate(15),
+            'todos' => $request->user()->todos()->paginate(15),
             'todoStatus' => TodoStatusEnum::getValues(),
             'deletedTodoMessage' => $request->session()->get('deletedTodoMessage'),
         ]);
@@ -38,13 +38,14 @@ class TodoController extends Controller
         return back();
     }
 
-    public function show(Todo $todo): Response
+    public function show(Request $request, Todo $todo): Response
     {
         $this->authorize('view', $todo);
 
         return Inertia::render('todo/todo-details', [
             'todo' => $todo,
             'todoStatus' => TodoStatusEnum::getValues(),
+            'deletedTodoMessage' => $request->session()->get('deletedTodoMessage'),
         ]);
     }
 
@@ -61,7 +62,11 @@ class TodoController extends Controller
     {
         $this->authorize('delete', $todo);
 
-        $deleteTodoAction->execute($todo);
+        $response = $deleteTodoAction->execute($todo);
+
+        if ($response === '401') {
+            return back()->withErrors('deletedTodoMessage', __('401'));
+        }
 
         return redirect()->route('todos.index')->with('deletedTodoMessage', __('Todo deleted successfully.'));
 
