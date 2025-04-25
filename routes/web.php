@@ -22,7 +22,12 @@ Route::get('/run-queue/{token}', function ($token) {
         abort(403); // Unauthorized access
     }
 
-    Artisan::call('queue:work --max-jobs=5');
+    try {
+        Artisan::call('queue:work --max-jobs=5');
+        Log::info('Queue worker ran successfully.');
+    } catch (Exception $e) {
+        Log::error('Queue worker failed: '.$e->getMessage());
+    }
 
     return response('Queue executed', 200);
 });
