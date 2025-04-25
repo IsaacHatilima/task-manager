@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Todo;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
@@ -14,13 +13,11 @@ class TodoFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->title(),
+            'title' => $this->faker->word(),
             'description' => $this->faker->text(),
-            'status' => $this->faker->word(),
+            'status' => $this->faker->randomElement(['cancelled', 'completed', 'in_progress', 'pending']),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-
-            'user_id' => User::factory(),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Profile;
+use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -47,6 +48,7 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) {
             Profile::factory()->create(['user_id' => $user->id]);
+            Todo::factory(10)->create(['user_id' => $user->id]);
         });
     }
 }
