@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import { FcGoogle } from 'react-icons/fc';
 
 type LoginForm = {
     email: string;
@@ -90,6 +91,11 @@ export default function Login({ status }: LoginProps) {
                     <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Log in
+                    </Button>
+
+                    <Button type="button" onClick={() => (window.location.href = route('google.redirect'))}>
+                        <FcGoogle size={25} />
+                        <span className="ml-2">Continue with Google</span>
                     </Button>
                 </div>
 
