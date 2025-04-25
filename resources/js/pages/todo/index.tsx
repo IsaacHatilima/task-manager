@@ -14,7 +14,9 @@ import AppLayout from '@/layouts/app-layout';
 import Create from '@/pages/todo/partials/create';
 import { type BreadcrumbItem } from '@/types';
 import { PaginatedTodos, Todo } from '@/types/todo';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,11 +33,19 @@ export default function Index() {
         pending: 'border-amber-500 text-amber-600',
         in_progress: 'border-blue-500 text-blue-600',
     };
+    const deletedTodoMessage: string = usePage().props.deletedTodoMessage as string;
+
+    useEffect(() => {
+        if (deletedTodoMessage) {
+            toast.success('Success', { description: deletedTodoMessage });
+        }
+    }, [deletedTodoMessage]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
-            <div className="flex justify-center p-4">
-                <div className="w-1/2">
+            <Head title="Todo" />
+            <div className="flex justify-center">
+                <div className="w-full">
                     <Card>
                         <CardHeader>
                             <div className="flex items-center justify-between">
@@ -72,7 +82,12 @@ export default function Index() {
                                                 {todo.description.length > 80 ? `${todo.description.slice(0, 80)}...` : todo.description}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Create isMain={false} todo={todo} />
+                                                <div className="flex gap-3">
+                                                    <Create isMain={false} todo={todo} />
+                                                    <Link href={route('todos.show', todo.id)} className="text-blue-500 hover:underline">
+                                                        View
+                                                    </Link>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}

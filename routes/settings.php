@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\CustomPasswordConfirmationController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorController;
@@ -21,3 +22,5 @@ Route::put('settings/two-factor-authentication-recovery-codes', [TwoFactorContro
 Route::get('settings/appearance', function () {
     return Inertia::render('settings/appearance');
 })->name('appearance');
+
+Route::post('password-confirmation', [CustomPasswordConfirmationController::class, 'confirm'])->name('password.confirmation');

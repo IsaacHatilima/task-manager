@@ -48,11 +48,11 @@ function TodoForm({ onSuccess, todo }: TodoFormProps) {
         if (todo) {
             handleUpdateTodo(todo);
         } else {
-            handleCreateTodo(e);
+            handleCreateTodo();
         }
     };
 
-    const handleCreateTodo: FormEventHandler = () => {
+    const handleCreateTodo = () => {
         post(route('todos.store'), {
             preserveScroll: true,
             onSuccess: () => {
