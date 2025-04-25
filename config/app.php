@@ -28,6 +28,8 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    'cron' => env('QUEUE_TOKEN', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode

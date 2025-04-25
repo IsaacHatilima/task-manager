@@ -16,3 +16,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/run-queue/{token}', function ($token) {
+    if ($token !== config('app.cron')) {
+        abort(403); // Unauthorized access
+    }
+
+    Artisan::call('queue:work --once');
+
+    return response('Queue executed', 200);
+});
