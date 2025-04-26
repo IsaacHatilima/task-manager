@@ -17,13 +17,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__.'/auth.php';
 
+/**
+ * For testing purposes only, application running on shared hosting
+ * Runs 1 queue job per minute
+ */
 Route::get('/run-queue/{token}', function ($token) {
     if ($token !== config('app.cron')) {
         abort(403); // Unauthorized access
     }
 
     try {
-        Artisan::call('queue:work --max-jobs=5');
+        Artisan::call('queue:work --once');
         Log::info('Queue worker ran successfully.');
     } catch (Exception $e) {
         Log::error('Queue worker failed: '.$e->getMessage());
