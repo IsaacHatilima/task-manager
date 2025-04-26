@@ -28,7 +28,6 @@ Route::get('/run-queue/{token}', function ($token) {
 
     try {
         Artisan::call('queue:work --once');
-        Log::info('Queue worker ran successfully.');
     } catch (Exception $e) {
         Log::error('Queue worker failed: '.$e->getMessage());
     }
