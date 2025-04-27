@@ -25,6 +25,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Profile::factory()->create(['user_id' => $user->id]);
-        Todo::factory(10)->create(['user_id' => $user->id]);
+        Todo::factory(30)->create(['user_id' => $user->id]);
     }
 }

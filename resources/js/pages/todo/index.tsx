@@ -1,20 +1,15 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
+import { Input } from '@/components/ui/input';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import Create from '@/pages/todo/partials/create';
 import { type BreadcrumbItem } from '@/types';
-import { PaginatedTodos, Todo } from '@/types/todo';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { PaginatedTodos, Todo, TodoFilters } from '@/types/todo';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { debounce } from 'lodash';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -27,6 +22,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Index() {
     const todos: PaginatedTodos = usePage().props.todos as PaginatedTodos;
+    console.log(todos);
+    const todoStatus: Array<string> = usePage().props.todoStatus as Array<string>;
     const statusColorMap: Record<string, string> = {
         completed: 'border-green-500 text-green-600',
         canceled: 'border-red-500 text-red-600',
@@ -34,12 +31,52 @@ export default function Index() {
         in_progress: 'border-blue-500 text-blue-600',
     };
     const deletedTodoMessage: string = usePage().props.deletedTodoMessage as string;
+    const filters: TodoFilters = usePage().props.filters as TodoFilters;
+    const { data, setData } = useForm({
+        title: filters?.title || '',
+        description: filters?.description || '',
+        status: filters?.status || '',
+    });
 
     useEffect(() => {
         if (deletedTodoMessage && deletedTodoMessage !== '401') {
             toast.success('Success', { description: deletedTodoMessage });
         }
     }, [deletedTodoMessage]);
+
+    const buildQueryParams = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPage = urlParams.get('page') || 1;
+        const filtersApplied = Object.keys(data).some((key) => data[key as keyof TodoFilters] !== '' && data[key as keyof TodoFilters] !== null);
+        const pageToUse = filtersApplied ? 1 : currentPage;
+        const params: Record<string, string | number> = {
+            ...data,
+            page: pageToUse,
+        };
+
+        Object.keys(params).forEach((key) => {
+            if (params[key] === '' || params[key] === null || params[key] === 'all') {
+                delete params[key];
+            }
+        });
+
+        return params;
+    };
+
+    const debouncedSearch = debounce(() => {
+        const params = buildQueryParams();
+        router.get(route('todos.index'), params, {
+            preserveState: true,
+        });
+    }, 300);
+
+    useEffect(() => {
+        debouncedSearch();
+
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [data, debouncedSearch]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -56,13 +93,60 @@ export default function Index() {
                         </CardHeader>
                         <CardContent>
                             <Table>
-                                <TableCaption>A list of your recent invoices.</TableCaption>
+                                <TableCaption>A list of your Todos.</TableCaption>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-[100px]">Title</TableHead>
+                                        <TableHead>Title</TableHead>
                                         <TableHead>Status</TableHead>
                                         <TableHead>Description</TableHead>
                                         <TableHead className="ml-4 text-right">Action</TableHead>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableHead>
+                                            <Input
+                                                className="font-medium"
+                                                id="title"
+                                                name="title"
+                                                placeholder="Title"
+                                                value={data.title}
+                                                onChange={(e) => {
+                                                    setData('title', e.target.value);
+                                                }}
+                                            />
+                                        </TableHead>
+                                        <TableHead>
+                                            <Select value={data.status} onValueChange={(value) => setData('status', value)}>
+                                                <SelectTrigger className="mt-1 w-full">
+                                                    <SelectValue placeholder="Select Status" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectGroup>
+                                                        <SelectLabel>Status</SelectLabel>
+                                                        <SelectItem value="all">All</SelectItem>
+                                                        {todoStatus.map((g) => (
+                                                            <SelectItem key={g} value={g}>
+                                                                {g
+                                                                    .split('_')
+                                                                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                                                                    .join(' ')}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
+                                        </TableHead>
+                                        <TableHead>
+                                            <Input
+                                                className="font-medium"
+                                                id="description"
+                                                name="description"
+                                                placeholder="Description"
+                                                value={data.description}
+                                                onChange={(e) => {
+                                                    setData('description', e.target.value);
+                                                }}
+                                            />
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -98,16 +182,59 @@ export default function Index() {
                             <Pagination>
                                 <PaginationContent>
                                     <PaginationItem>
-                                        <PaginationPrevious href="#" />
+                                        <PaginationPrevious
+                                            onClick={() => {
+                                                if (todos.prev_page_url) {
+                                                    router.visit(todos.prev_page_url);
+                                                }
+                                            }}
+                                        />
                                     </PaginationItem>
+
+                                    {todos.links.map((page, index) => {
+                                        if (index === 0 || index === todos.links.length - 1) {
+                                            return null; // Skip default "Previous" and "Next"
+                                        }
+
+                                        const currentPage = todos.current_page;
+                                        const totalPages = todos.last_page;
+
+                                        const pageNumber = Number(page.label);
+                                        if (isNaN(pageNumber)) return null; // skip if label isn't a number
+
+                                        // Shows first 5, last 5, and 5 around current page
+                                        if (
+                                            pageNumber <= 5 || // first 5 pages
+                                            pageNumber > totalPages - 5 || // last 5 pages
+                                            (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2) // current +- 2
+                                        ) {
+                                            return (
+                                                <PaginationItem key={index}>
+                                                    <PaginationLink
+                                                        isActive={page.active}
+                                                        onClick={() => {
+                                                            if (page?.url) {
+                                                                router.visit(page?.url);
+                                                            }
+                                                        }}
+                                                    >
+                                                        {page.label}
+                                                    </PaginationLink>
+                                                </PaginationItem>
+                                            );
+                                        }
+
+                                        return null; // Else don't render anything here yet
+                                    })}
+
                                     <PaginationItem>
-                                        <PaginationLink href="#">1</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationEllipsis />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationNext href="#" />
+                                        <PaginationNext
+                                            onClick={() => {
+                                                if (todos.next_page_url) {
+                                                    router.visit(todos.next_page_url);
+                                                }
+                                            }}
+                                        />
                                     </PaginationItem>
                                 </PaginationContent>
                             </Pagination>

@@ -31,3 +31,9 @@ export interface PaginationLink {
     label: string;
     active: boolean;
 }
+
+export interface TodoFilters {
+    title: string | null;
+    description: string | null;
+    status: string | null;
+}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Todo\CreateTodoAction;
 use App\Actions\Todo\DeleteTodoAction;
+use App\Actions\Todo\ListTodosAction;
 use App\Actions\Todo\UpdateTodoAction;
 use App\Enums\TodoStatusEnum;
 use App\Http\Requests\TodoRequest;
@@ -18,14 +19,19 @@ class TodoController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index(Request $request): Response
+    public function index(Request $request, ListTodosAction $listTodosAction): Response
     {
         $this->authorize('viewAny', Todo::class);
 
         return Inertia::render('todo/index', [
-            'todos' => $request->user()->todos()->paginate(15),
+            'todos' => $listTodosAction->execute($request),
             'todoStatus' => TodoStatusEnum::getValues(),
             'deletedTodoMessage' => $request->session()->get('deletedTodoMessage'),
+            'filters' => [
+                'title' => $request->title,
+                'description' => $request->description,
+                'status' => $request->status,
+            ],
         ]);
     }
 

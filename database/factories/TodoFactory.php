@@ -14,7 +14,7 @@ class TodoFactory extends Factory
     {
         return [
             'title' => $this->faker->word(),
-            'description' => $this->faker->text(),
+            'description' => $this->faker->text(maxNbChars: 150),
             'status' => $this->faker->randomElement(['cancelled', 'completed', 'in_progress', 'pending']),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
