@@ -181,7 +181,7 @@ export default function Index() {
                         <CardFooter>
                             <Pagination>
                                 <PaginationContent>
-                                    <PaginationItem>
+                                    <PaginationItem className="cursor-pointer">
                                         <PaginationPrevious
                                             onClick={() => {
                                                 if (todos.prev_page_url) {
@@ -209,7 +209,7 @@ export default function Index() {
                                             (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2) // current +- 2
                                         ) {
                                             return (
-                                                <PaginationItem key={index}>
+                                                <PaginationItem key={index} className="cursor-pointer">
                                                     <PaginationLink
                                                         isActive={page.active}
                                                         onClick={() => {
@@ -227,7 +227,7 @@ export default function Index() {
                                         return null; // Else don't render anything here yet
                                     })}
 
-                                    <PaginationItem>
+                                    <PaginationItem className="cursor-pointer">
                                         <PaginationNext
                                             onClick={() => {
                                                 if (todos.next_page_url) {

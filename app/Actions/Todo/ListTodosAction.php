@@ -22,6 +22,6 @@ class ListTodosAction
             $query->where('status', $request->status);
         }
 
-        return $query->paginate(2)->withQueryString()->toArray();
+        return $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString()->toArray();
     }
 }

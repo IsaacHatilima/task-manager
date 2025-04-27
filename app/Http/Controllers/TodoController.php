@@ -49,7 +49,7 @@ class TodoController extends Controller
         $this->authorize('view', $todo);
 
         return Inertia::render('todo/todo-details', [
-            'todo' => $todo,
+            'todo' => $todo->load('user'),
             'todoStatus' => TodoStatusEnum::getValues(),
             'deletedTodoMessage' => $request->session()->get('deletedTodoMessage'),
         ]);

@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
 import { PasswordConfirmModal } from '@/pages/auth/password-confirm-modal';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, SharedData } from '@/types';
 import { Todo } from '@/types/todo';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
@@ -24,6 +24,7 @@ type TodoFormType = {
 
 function TodoDetails() {
     const todo: Todo = usePage().props.todo as Todo;
+    const { auth } = usePage<SharedData>().props;
 
     const todoStatus: Array<string> = usePage().props.todoStatus as Array<string>;
 
@@ -102,7 +103,9 @@ function TodoDetails() {
                                         .join(' ')}
                                 </Badge>
                             </div>
-                            <PasswordConfirmModal btnLabel="Delete" btnVariant="destructive" intendedCall={handleDeleteTodo} />
+                            {auth.user.id === todo.user.id && (
+                                <PasswordConfirmModal btnLabel="Delete" btnVariant="destructive" intendedCall={handleDeleteTodo} />
+                            )}
                         </CardTitle>
                         <CardDescription>
                             <strong>Created At:</strong> {new Date(todo.created_at).toLocaleDateString()}
