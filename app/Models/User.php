@@ -46,6 +46,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Todo::class);
     }
 
+    public function todoAccesses(): HasMany
+    {
+        return $this->hasMany(TodoAccess::class);
+    }
+
+    public function accessibleTodos()
+    {
+        return $this->belongsToMany(Todo::class, 'todo_accesses');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

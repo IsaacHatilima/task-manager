@@ -10,7 +10,7 @@ import { type BreadcrumbItem } from '@/types';
 import { PaginatedTodos, Todo, TodoFilters } from '@/types/todo';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { debounce } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -22,7 +22,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Index() {
     const todos: PaginatedTodos = usePage().props.todos as PaginatedTodos;
-    console.log(todos);
     const todoStatus: Array<string> = usePage().props.todoStatus as Array<string>;
     const statusColorMap: Record<string, string> = {
         completed: 'border-green-500 text-green-600',
@@ -38,45 +37,37 @@ export default function Index() {
         status: filters?.status || '',
     });
 
+    const debouncedSearch = useMemo(() => {
+        return debounce(() => {
+            const filtersApplied = Object.keys(data).some((key) => data[key as keyof TodoFilters] !== '' && data[key as keyof TodoFilters] !== null);
+
+            const params: Record<string, string | number> = {
+                ...data,
+                page: filtersApplied ? 1 : todos.current_page,
+            };
+
+            Object.keys(params).forEach((key) => {
+                if (params[key] === '' || params[key] === null || params[key] === 'all') {
+                    delete params[key];
+                }
+            });
+
+            router.get(route('todos.index'), params, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }, 300);
+    }, [data, todos.current_page]);
+
+    useEffect(() => {
+        debouncedSearch();
+    }, [data, debouncedSearch]);
+
     useEffect(() => {
         if (deletedTodoMessage && deletedTodoMessage !== '401') {
             toast.success('Success', { description: deletedTodoMessage });
         }
     }, [deletedTodoMessage]);
-
-    const buildQueryParams = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentPage = urlParams.get('page') || 1;
-        const filtersApplied = Object.keys(data).some((key) => data[key as keyof TodoFilters] !== '' && data[key as keyof TodoFilters] !== null);
-        const pageToUse = filtersApplied ? 1 : currentPage;
-        const params: Record<string, string | number> = {
-            ...data,
-            page: pageToUse,
-        };
-
-        Object.keys(params).forEach((key) => {
-            if (params[key] === '' || params[key] === null || params[key] === 'all') {
-                delete params[key];
-            }
-        });
-
-        return params;
-    };
-
-    const debouncedSearch = debounce(() => {
-        const params = buildQueryParams();
-        router.get(route('todos.index'), params, {
-            preserveState: true,
-        });
-    }, 300);
-
-    useEffect(() => {
-        debouncedSearch();
-
-        return () => {
-            debouncedSearch.cancel();
-        };
-    }, [data, debouncedSearch]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

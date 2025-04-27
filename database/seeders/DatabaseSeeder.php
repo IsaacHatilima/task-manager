@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Profile;
 use App\Models\Todo;
+use App\Models\TodoAccess;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -25,6 +26,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Profile::factory()->create(['user_id' => $user->id]);
-        Todo::factory(30)->create(['user_id' => $user->id]);
+        Todo::factory(35)
+            ->create(['user_id' => $user->id])
+            ->each(function ($todo) use ($user) {
+                TodoAccess::factory()->create([
+                    'todo_id' => $todo->id,
+                    'user_id' => $user->id,
+                    'is_owner' => true,
+                ]);
+            });
     }
 }

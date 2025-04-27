@@ -2,23 +2,25 @@
 
 namespace Database\Factories;
 
-use App\Enums\TodoStatusEnum;
 use App\Models\Todo;
+use App\Models\TodoAccess;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class TodoFactory extends Factory
+class TodoAccessFactory extends Factory
 {
-    protected $model = Todo::class;
+    protected $model = TodoAccess::class;
 
     public function definition(): array
     {
         return [
-            'title' => $this->faker->word(),
-            'description' => $this->faker->text(maxNbChars: 150),
-            'status' => $this->faker->randomElement(TodoStatusEnum::getValues()),
+            'is_owner' => $this->faker->boolean(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
+
+            'user_id' => User::factory(),
+            'todo_id' => Todo::factory(),
         ];
     }
 }
