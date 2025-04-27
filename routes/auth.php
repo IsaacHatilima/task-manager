@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -25,6 +26,10 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/', [LoginController::class, 'create'])
         ->name('login');
+
+    Route::get('two-factor-authentication', function () {
+        return Inertia::render('auth/two-factor-challenge');
+    })->name('two-factor.login');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
