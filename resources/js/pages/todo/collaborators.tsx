@@ -7,7 +7,7 @@ import { BreadcrumbItem, PaginatedUsers, User } from '@/types';
 import { Todo } from '@/types/todo';
 import { Head, router, usePage } from '@inertiajs/react';
 
-function Members() {
+function Collaborators() {
     const todo: Todo = usePage().props.todo as Todo;
     const todoMembers: PaginatedUsers = usePage().props.todoMembers as PaginatedUsers;
     const breadcrumbs: BreadcrumbItem[] = [
@@ -26,7 +26,7 @@ function Members() {
     ];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Todo Members" />
+            <Head title="Todo Collaborators" />
             <div className="flex justify-center">
                 <div className="w-full">
                     <Card>
@@ -35,11 +35,11 @@ function Members() {
                                 <CardTitle>{todo.title}</CardTitle>
                                 <InviteMember todo={todo} />
                             </div>
-                            <CardDescription>Todo Members</CardDescription>
+                            <CardDescription>Todo Collaborators</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Table>
-                                <TableCaption>A list of Todo Members.</TableCaption>
+                                <TableCaption>A list of Todo Collaborators.</TableCaption>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Name</TableHead>
@@ -128,4 +128,4 @@ function Members() {
     );
 }
 
-export default Members;
+export default Collaborators;

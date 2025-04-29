@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ErrorPageController;
 use App\Http\Controllers\Todo\AcceptInviteController;
-use App\Http\Controllers\Todo\MembersController;
+use App\Http\Controllers\Todo\CollaboratorsController;
 use App\Http\Controllers\Todo\TodoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,8 +16,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('todos', TodoController::class);
 
-    Route::get('/todos/{todo}/members', [MembersController::class, 'show'])->name('todos.members.index');
-    Route::post('/todos/{todo}/members', [MembersController::class, 'store'])->name('todos.members.store');
+    Route::get('/todos/{todo}/members', [CollaboratorsController::class, 'show'])->name('todos.members.index');
+    Route::post('/todos/{todo}/members', [CollaboratorsController::class, 'store'])->name('todos.members.store');
     Route::get('/invite/{todo}/{token}', [AcceptInviteController::class, 'acceptInvite'])->name('invite-accept');
 
 });

@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class MembersController extends Controller
+class CollaboratorsController extends Controller
 {
     use AuthorizesRequests;
 
@@ -20,7 +20,7 @@ class MembersController extends Controller
     {
         $this->authorize('view', $todo);
 
-        return Inertia::render('todo/members', [
+        return Inertia::render('todo/collaborators', [
             'todo' => $todo,
             'todoMembers' => $todo->accessibleUsers()->paginate(10),
         ]);

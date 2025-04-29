@@ -16,7 +16,7 @@ class InviteCollaboratorAction
         $invite = $todo->invites()->create([
             'email' => $request->email,
             'token' => Str::random(32),
-            'expires_at' => now()->addDays(2),
+            'expires_at' => now()->addMinutes(2),
         ]);
         $inviterName = auth()->user()->profile->first_name;
         $todoName = $todo->title;
