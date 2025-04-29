@@ -19,7 +19,11 @@ class StoreIntendedUrl
         if (! Auth::check()
             && ! $request->is('/')
             && ! $request->is('register')
-            && ! $request->is('login')) {
+            && ! $request->is('login')
+            && ! $request->is('google/callback')
+            && ! $request->is('google/redirect')
+            && ! $request->is('two-factor-challenge')
+        ) {
             session(['url.intended' => $request->fullUrl()]);
         }
 

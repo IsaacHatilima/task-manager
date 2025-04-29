@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Profile;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -33,9 +34,14 @@ test('profile page is displayed', function () {
 });
 
 test('profile information can be updated', function () {
-    $user = User::factory()->create([
-        'password' => Hash::make('Password1#'),
-    ]);
+    $user = User::factory()
+        ->has(Profile::factory([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ]))
+        ->create([
+            'password' => Hash::make('Password1#'),
+        ]);
 
     $this->get(route('login'));
 
@@ -77,9 +83,14 @@ test('profile information can be updated', function () {
 });
 
 test('email verification status is unchanged when the email address is unchanged', function () {
-    $user = User::factory()->create([
-        'password' => Hash::make('Password1#'),
-    ]);
+    $user = User::factory()
+        ->has(Profile::factory([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ]))
+        ->create([
+            'password' => Hash::make('Password1#'),
+        ]);
 
     $this->get(route('login'));
 
