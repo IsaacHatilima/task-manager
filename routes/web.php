@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\TodoController;
+use App\Http\Controllers\Todo\MembersController;
+use App\Http\Controllers\Todo\TodoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,6 +13,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     require __DIR__.'/settings.php';
 
     Route::resource('todos', TodoController::class);
+
+    Route::get('/todos/{todo}/members', [MembersController::class, 'show'])->name('todos.members.index');
+    Route::post('/todos/{todo}/members', [MembersController::class, 'store'])->name('todos.members.store');
 
 });
 

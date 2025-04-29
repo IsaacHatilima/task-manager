@@ -11,7 +11,7 @@ import AppLayout from '@/layouts/app-layout';
 import { PasswordConfirmModal } from '@/pages/auth/password-confirm-modal';
 import type { BreadcrumbItem, SharedData } from '@/types';
 import { Todo } from '@/types/todo';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 import { toast } from 'sonner';
@@ -90,6 +90,16 @@ function TodoDetails() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Todo Details" />
+            <div className="mb-2 flex justify-end">
+                <Button
+                    type="button"
+                    onClick={() => {
+                        router.visit(route('todos.members.index', todo.id));
+                    }}
+                >
+                    Todo Member
+                </Button>
+            </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader>

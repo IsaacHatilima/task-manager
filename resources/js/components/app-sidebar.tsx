@@ -1,36 +1,21 @@
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { NavGroup } from '@/types';
+import { NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { LayoutGrid, ListTodo } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavGroup[] = [
+const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        items: [
-            {
-                title: 'Dashboard',
-                href: route('dashboard'),
-                icon: LayoutGrid,
-            },
-        ],
+        href: route('dashboard'),
+        icon: LayoutGrid,
     },
     {
         title: 'Todos',
-        items: [
-            {
-                title: 'My Todos',
-                href: route('todos.index'),
-                icon: ListTodo,
-            },
-            {
-                title: 'Invited Todos',
-                href: route('todos.index'),
-                icon: ListTodo,
-            },
-        ],
+        href: route('todos.index'),
+        icon: ListTodo,
     },
 ];
 

@@ -159,6 +159,9 @@ export default function Index() {
                                             <TableCell className="text-right">
                                                 <div className="flex gap-3">
                                                     <Create isMain={false} todo={todo} />
+                                                    <Link href={route('todos.members.index', todo.id)} className="text-green-500 hover:underline">
+                                                        Members
+                                                    </Link>
                                                     <Link href={route('todos.show', todo.id)} className="text-blue-500 hover:underline">
                                                         View
                                                     </Link>

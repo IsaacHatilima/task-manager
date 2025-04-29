@@ -10,9 +10,15 @@ class TodoAccessPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool {}
+    public function viewAny(User $user): bool
+    {
+        return false;
+    }
 
-    public function view(User $user, TodoAccess $todoAccess): bool {}
+    public function view(User $user, TodoAccess $todoAccess): bool
+    {
+        return $user->id === $todoAccess->user_id;
+    }
 
     public function create(User $user): bool {}
 

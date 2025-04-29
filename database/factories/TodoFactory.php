@@ -6,6 +6,7 @@ use App\Enums\TodoStatusEnum;
 use App\Models\Todo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Str;
 
 class TodoFactory extends Factory
 {
@@ -14,7 +15,7 @@ class TodoFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->word(),
+            'title' => Str::title($this->faker->word()),
             'description' => $this->faker->text(maxNbChars: 150),
             'status' => $this->faker->randomElement(TodoStatusEnum::getValues()),
             'created_at' => Carbon::now(),

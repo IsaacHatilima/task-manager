@@ -25,6 +25,11 @@ class TodoPolicy
         return true;
     }
 
+    public function invite(User $user, Todo $todo): bool
+    {
+        return $user->id === $todo->user_id;
+    }
+
     public function update(User $user, Todo $todo): bool
     {
         return $user->id === $todo->user_id;

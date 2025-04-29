@@ -1,5 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
+import { PaginationLink } from '@/types/todo';
 
 export interface Auth {
     user: User;
@@ -52,4 +53,20 @@ export interface Profile {
     gender?: string;
 
     [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface PaginatedUsers {
+    current_page: number;
+    data: User[];
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: PaginationLink[];
+    next_page_url: string | URL;
+    path: string;
+    per_page: number;
+    prev_page_url: string | URL;
+    to: number;
+    total: number;
 }

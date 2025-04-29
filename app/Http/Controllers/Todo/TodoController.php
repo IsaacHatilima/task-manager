@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Todo;
 
 use App\Actions\Todo\CreateTodoAction;
 use App\Actions\Todo\DeleteTodoAction;
 use App\Actions\Todo\ListTodosAction;
 use App\Actions\Todo\UpdateTodoAction;
 use App\Enums\TodoStatusEnum;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\TodoRequest;
 use App\Models\Todo;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
