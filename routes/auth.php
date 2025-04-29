@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware('guest')->group(function () {
+    Route::get('/', [LoginController::class, 'create'])
+        ->name('login');
+
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
@@ -23,9 +26,6 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])
         ->name('google.callback');
-
-    Route::get('/', [LoginController::class, 'create'])
-        ->name('login');
 
     Route::get('two-factor-authentication', function () {
         return Inertia::render('auth/two-factor-challenge');

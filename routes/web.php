@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ErrorPageController;
+use App\Http\Controllers\Todo\AcceptInviteController;
 use App\Http\Controllers\Todo\MembersController;
 use App\Http\Controllers\Todo\TodoController;
 use Illuminate\Support\Facades\Route;
@@ -16,8 +18,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/todos/{todo}/members', [MembersController::class, 'show'])->name('todos.members.index');
     Route::post('/todos/{todo}/members', [MembersController::class, 'store'])->name('todos.members.store');
+    Route::get('/invite/{todo}/{token}', [AcceptInviteController::class, 'acceptInvite'])->name('invite-accept');
 
 });
+
+Route::get('/error/{code}', [ErrorPageController::class, 'show'])->name('error.show');
 
 require __DIR__.'/auth.php';
 

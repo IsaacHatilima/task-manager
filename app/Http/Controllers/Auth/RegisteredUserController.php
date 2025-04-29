@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
             'last_login_at' => now(),
         ]);
 
-        return to_route('dashboard');
+        return redirect()->intended(route('dashboard'));
     }
 
     /**

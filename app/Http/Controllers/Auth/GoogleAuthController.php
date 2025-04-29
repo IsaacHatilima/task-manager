@@ -69,7 +69,7 @@ class GoogleAuthController extends Controller
             'last_login_at' => now(),
         ]);
 
-        // Redirect to the dashboard
-        return to_route('dashboard');
+        // Redirect to the Intended route or dashboard
+        return redirect()->intended(route('dashboard'));
     }
 }

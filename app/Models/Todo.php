@@ -32,6 +32,11 @@ class Todo extends Model
         return $this->hasMany(TodoAccess::class);
     }
 
+    public function invites(): HasMany
+    {
+        return $this->hasMany(TodoInvite::class);
+    }
+
     public function accessibleUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'todo_accesses')->with('profile');
