@@ -35,7 +35,7 @@ function TodoForm({ onSuccess, todo }: TodoFormProps) {
 
     const handleInvite: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('todos.members.store', todo.id), {
+        post(route('todos.collaborators.store', todo.id), {
             preserveScroll: true,
             onSuccess: () => {
                 toast.success('Success', {

@@ -18,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/todos/{todo}/collaborators', [CollaboratorsController::class, 'show'])->name('todos.collaborators.index');
     Route::post('/todos/{todo}/collaborators', [CollaboratorsController::class, 'store'])->name('todos.collaborators.store');
+    Route::delete('/todos/{todo}/collaborators/{user}', [CollaboratorsController::class, 'destroy'])->name('todos.collaborators.destroy');
     Route::get('/invite/{todo}/{token}', [AcceptInviteController::class, 'acceptInvite'])->name('invite-accept');
 
 });

@@ -4,13 +4,15 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import InviteMember from '@/pages/todo/partials/invite-member';
-import { BreadcrumbItem, PaginatedUsers, User, UserFilters } from '@/types';
+import { BreadcrumbItem, PaginatedUsers, type SharedData, User, UserFilters } from '@/types';
 import { Todo } from '@/types/todo';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { debounce } from 'lodash';
 import { useEffect, useMemo } from 'react';
+import { toast } from 'sonner';
 
 function Collaborators() {
+    const { auth } = usePage<SharedData>().props;
     const todo: Todo = usePage().props.todo as Todo;
     const todoMembers: PaginatedUsers = usePage().props.todoMembers as PaginatedUsers;
     const breadcrumbs: BreadcrumbItem[] = [
@@ -62,6 +64,17 @@ function Collaborators() {
         };
     }, [data, debouncedSearch]);
 
+    const handleDeleteTodoMember = (userId: string) => {
+        router.delete(route('todos.collaborators.destroy', { todo: todo.id, user: userId }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('Success', {
+                    description: 'Todo member deleted successfully',
+                });
+            },
+        });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Todo Collaborators" />
@@ -105,7 +118,16 @@ function Collaborators() {
                                                 {user.profile.first_name} {user.profile.last_name}
                                             </TableCell>
                                             <TableCell>{user.email}</TableCell>
-                                            <TableCell>Delete</TableCell>
+                                            <TableCell>
+                                                {auth.user.id === todo.user.id && user.id !== todo.user.id && (
+                                                    <span
+                                                        className="cursor-pointer text-red-500 hover:text-red-700"
+                                                        onClick={() => handleDeleteTodoMember(user.id)}
+                                                    >
+                                                        Delete
+                                                    </span>
+                                                )}
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
