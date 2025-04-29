@@ -1,11 +1,14 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import InviteMember from '@/pages/todo/partials/invite-member';
-import { BreadcrumbItem, PaginatedUsers, User } from '@/types';
+import { BreadcrumbItem, PaginatedUsers, User, UserFilters } from '@/types';
 import { Todo } from '@/types/todo';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { debounce } from 'lodash';
+import { useEffect, useMemo } from 'react';
 
 function Collaborators() {
     const todo: Todo = usePage().props.todo as Todo;
@@ -21,9 +24,44 @@ function Collaborators() {
         },
         {
             title: 'Todo Members',
-            href: route('todos.members.index', todo.id),
+            href: route('todos.collaborators.index', todo.id),
         },
     ];
+
+    const filters: UserFilters = usePage().props.filters as UserFilters;
+    const { data, setData } = useForm({
+        email: filters?.email || '',
+    });
+
+    const debouncedSearch = useMemo(() => {
+        return debounce(() => {
+            const filtersApplied = Object.keys(data).some((key) => data[key as keyof UserFilters] !== '' && data[key as keyof UserFilters] !== null);
+
+            const params: Record<string, string | number> = {
+                ...data,
+                page: filtersApplied ? 1 : todoMembers.current_page,
+            };
+
+            Object.keys(params).forEach((key) => {
+                if (params[key] === '' || params[key] === null || params[key] === 'all') {
+                    delete params[key];
+                }
+            });
+
+            router.get(route('todos.collaborators.index', todo.id), params, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }, 300);
+    }, [data, todoMembers.current_page, todo]);
+
+    useEffect(() => {
+        debouncedSearch();
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [data, debouncedSearch]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Todo Collaborators" />
@@ -38,6 +76,19 @@ function Collaborators() {
                             <CardDescription>Todo Collaborators</CardDescription>
                         </CardHeader>
                         <CardContent>
+                            <div className="mb-4 w-96">
+                                <Input
+                                    className="font-medium"
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="Search Email"
+                                    value={data.email}
+                                    onChange={(e) => {
+                                        setData('email', e.target.value);
+                                    }}
+                                />
+                            </div>
                             <Table>
                                 <TableCaption>A list of Todo Collaborators.</TableCaption>
                                 <TableHeader>

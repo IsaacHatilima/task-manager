@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Todo;
 
 use App\Actions\TodoCollaborator\InviteCollaboratorAction;
+use App\Actions\TodoCollaborator\ListCollaboratorsAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InviteCollaboratorRequest;
 use App\Models\Todo;
@@ -16,13 +17,13 @@ class CollaboratorsController extends Controller
 {
     use AuthorizesRequests;
 
-    public function show(Request $request, Todo $todo): Response
+    public function show(Request $request, Todo $todo, ListCollaboratorsAction $listCollaboratorsAction): Response
     {
         $this->authorize('view', $todo);
 
         return Inertia::render('todo/collaborators', [
             'todo' => $todo,
-            'todoMembers' => $todo->accessibleUsers()->paginate(10),
+            'todoMembers' => $listCollaboratorsAction->execute($request, $todo),
         ]);
     }
 

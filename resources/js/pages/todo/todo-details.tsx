@@ -94,7 +94,7 @@ function TodoDetails() {
                 <Button
                     type="button"
                     onClick={() => {
-                        router.visit(route('todos.members.index', todo.id));
+                        router.visit(route('todos.collaborators.index', todo.id));
                     }}
                 >
                     Todo Member

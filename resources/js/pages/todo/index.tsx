@@ -61,6 +61,9 @@ export default function Index() {
 
     useEffect(() => {
         debouncedSearch();
+        return () => {
+            debouncedSearch.cancel();
+        };
     }, [data, debouncedSearch]);
 
     useEffect(() => {
@@ -159,7 +162,10 @@ export default function Index() {
                                             <TableCell className="text-right">
                                                 <div className="flex gap-3">
                                                     <Create isMain={false} todo={todo} />
-                                                    <Link href={route('todos.members.index', todo.id)} className="text-green-500 hover:underline">
+                                                    <Link
+                                                        href={route('todos.collaborators.index', todo.id)}
+                                                        className="text-green-500 hover:underline"
+                                                    >
                                                         Members
                                                     </Link>
                                                     <Link href={route('todos.show', todo.id)} className="text-blue-500 hover:underline">

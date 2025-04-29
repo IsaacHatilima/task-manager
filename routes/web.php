@@ -16,8 +16,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('todos', TodoController::class);
 
-    Route::get('/todos/{todo}/members', [CollaboratorsController::class, 'show'])->name('todos.members.index');
-    Route::post('/todos/{todo}/members', [CollaboratorsController::class, 'store'])->name('todos.members.store');
+    Route::get('/todos/{todo}/collaborators', [CollaboratorsController::class, 'show'])->name('todos.collaborators.index');
+    Route::post('/todos/{todo}/collaborators', [CollaboratorsController::class, 'store'])->name('todos.collaborators.store');
     Route::get('/invite/{todo}/{token}', [AcceptInviteController::class, 'acceptInvite'])->name('invite-accept');
 
 });
