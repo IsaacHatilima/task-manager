@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Todo;
 
+use App\Actions\Task\ListTaskAction;
 use App\Actions\Todo\CreateTodoAction;
 use App\Actions\Todo\DeleteTodoAction;
 use App\Actions\Todo\ListTodosAction;
@@ -46,7 +47,7 @@ class TodoController extends Controller
         return back();
     }
 
-    public function show(Request $request, Todo $todo): Response
+    public function show(Request $request, Todo $todo, ListTaskAction $listTaskAction): Response
     {
         $this->authorize('view', $todo);
 
@@ -62,13 +63,15 @@ class TodoController extends Controller
 
         return Inertia::render('todo/todo-details', [
             'todo' => $todo->load('user'),
-            'todoTasks' => Task::where('todo_id', $todo->id)
-                ->with(['user', 'user.profile'])
-                ->orderBy('created_at', 'desc')
-                ->paginate(10),
+            'todoTasks' => $listTaskAction->execute($request, $todo),
             'taskCounts' => $taskCounts,
             'todoStatus' => TodoStatusEnum::getValues(),
             'deletedTodoMessage' => $request->session()->get('deletedTodoMessage'),
+            'filters' => [
+                'title' => $request->title,
+                'status' => $request->status,
+                'assigned_to' => $request->assigned_to,
+            ],
         ]);
     }
 

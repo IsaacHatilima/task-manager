@@ -1,19 +1,60 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { PaginatedTask, Task, TaskStats } from '@/types/task';
+import { PaginatedTask, Task, TaskFilters, TaskStats } from '@/types/task';
 import { Todo } from '@/types/todo';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { debounce } from 'lodash';
+import { useEffect, useMemo } from 'react';
 
-export default function TaskList({ todo, tasks, taskCounts }: { todo: Todo; tasks: PaginatedTask; taskCounts: TaskStats }) {
+export default function TaskList({ todo, taskCounts, todoStatus }: { todo: Todo; taskCounts: TaskStats; todoStatus: Array<string> }) {
+    const tasks: PaginatedTask = usePage().props.todoTasks as PaginatedTask;
     const statusColorMap: Record<string, string> = {
         completed: 'border-green-500 text-green-600',
         cancelled: 'border-red-500 text-red-600',
         pending: 'border-amber-500 text-amber-600',
         in_progress: 'border-blue-500 text-blue-600',
     };
+
+    const filters: TaskFilters = usePage().props.filters as TaskFilters;
+    const { data, setData } = useForm({
+        title: filters?.title || '',
+        status: filters?.status || '',
+        assigned_to: filters?.assigned_to || '',
+    });
+
+    const debouncedSearch = useMemo(() => {
+        return debounce(() => {
+            const filtersApplied = Object.keys(data).some((key) => data[key as keyof TaskFilters] !== '' && data[key as keyof TaskFilters] !== null);
+
+            const params: Record<string, string | number> = {
+                ...data,
+                page: filtersApplied ? 1 : tasks.current_page,
+            };
+
+            Object.keys(params).forEach((key) => {
+                if (params[key] === '' || params[key] === null || params[key] === 'all') {
+                    delete params[key];
+                }
+            });
+
+            router.get(route('todos.show', todo.id), params, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }, 300);
+    }, [data, tasks.current_page, todo]);
+
+    useEffect(() => {
+        debouncedSearch();
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [data, debouncedSearch]);
 
     return (
         <Card>
@@ -35,6 +76,56 @@ export default function TaskList({ todo, tasks, taskCounts }: { todo: Todo; task
                             <TableHead>Status</TableHead>
                             <TableHead>Assigned</TableHead>
                             <TableHead className="ml-4 text-right">Action</TableHead>
+                        </TableRow>
+                        <TableRow>
+                            <TableHead>
+                                <Input
+                                    className="font-medium"
+                                    id="title"
+                                    name="title"
+                                    type="text"
+                                    placeholder="Search Title"
+                                    value={data.title}
+                                    onChange={(e) => {
+                                        setData('title', e.target.value);
+                                    }}
+                                />
+                            </TableHead>
+                            <TableHead>
+                                <Select value={data.status} onValueChange={(value) => setData('status', value)}>
+                                    <SelectTrigger className="mt-1 w-full">
+                                        <SelectValue placeholder="Select Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Status</SelectLabel>
+                                            <SelectItem value="all">All</SelectItem>
+                                            {todoStatus.map((g) => (
+                                                <SelectItem key={g} value={g}>
+                                                    {g
+                                                        .split('_')
+                                                        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                                                        .join(' ')}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </TableHead>
+                            <TableHead>
+                                <Input
+                                    className="font-medium"
+                                    id="assigned_to"
+                                    name="assigned_to"
+                                    type="text"
+                                    placeholder="Search Full Name"
+                                    value={data.assigned_to}
+                                    onChange={(e) => {
+                                        setData('assigned_to', e.target.value);
+                                    }}
+                                />
+                            </TableHead>
+                            <TableHead className="ml-4 text-right"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

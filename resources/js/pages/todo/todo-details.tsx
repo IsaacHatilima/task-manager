@@ -10,7 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { PasswordConfirmModal } from '@/pages/auth/password-confirm-modal';
 import TaskList from '@/pages/todo/partials/task-list';
 import type { BreadcrumbItem, SharedData } from '@/types';
-import { PaginatedTask, TaskStats } from '@/types/task';
+import { TaskStats } from '@/types/task';
 import { Todo } from '@/types/todo';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
@@ -25,7 +25,7 @@ type TodoFormType = {
 
 function TodoDetails() {
     const todo: Todo = usePage().props.todo as Todo;
-    const tasks: PaginatedTask = usePage().props.todoTasks as PaginatedTask;
+
     const taskCounts: TaskStats = usePage().props.taskCounts as TaskStats;
     const { auth } = usePage<SharedData>().props;
 
@@ -188,7 +188,7 @@ function TodoDetails() {
                     </form>
                 </Card>
 
-                <TaskList todo={todo} tasks={tasks} taskCounts={taskCounts} />
+                <TaskList todo={todo} taskCounts={taskCounts} todoStatus={todoStatus} />
             </div>
         </AppLayout>
     );

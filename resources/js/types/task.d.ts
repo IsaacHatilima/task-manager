@@ -34,8 +34,8 @@ export interface PaginationLink {
 
 export interface TaskFilters {
     title: string | null;
-    description: string | null;
     status: string | null;
+    assigned_to: string | null;
 }
 
 export interface TaskStats {
