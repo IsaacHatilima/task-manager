@@ -2,6 +2,9 @@
 
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
+use PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException;
+use PragmaRX\Google2FA\Exceptions\InvalidCharactersException;
+use PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException;
 use PragmaRX\Google2FA\Google2FA;
 
 test('two-factor auth page is displayed', function () {
@@ -234,20 +237,24 @@ test('user can activate and confirm 2fa', function () {
     $decryptedSecret = Crypt::decrypt($user->two_factor_secret);
 
     $google2fa = new Google2FA;
-    $otp = $google2fa->getCurrentOtp($decryptedSecret);
-
-    $this
-        ->followingRedirects()
-        ->post('/user/confirmed-two-factor-authentication', [
-            'code' => $otp,
-        ])
-        ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('settings/two-factor-setup')
-            ->whereNot('auth.user.two_factor_secret', null)
-            ->whereNot('auth.user.two_factor_recovery_codes', null)
-            ->whereNot('auth.user.two_factor_confirmed_at', null)
-        );
+    try {
+        $otp = $google2fa->getCurrentOtp($decryptedSecret);
+        $this
+            ->followingRedirects()
+            ->post('/user/confirmed-two-factor-authentication', [
+                'code' => $otp,
+            ])
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('settings/two-factor-setup')
+                ->whereNot('auth.user.two_factor_secret', null)
+                ->whereNot('auth.user.two_factor_recovery_codes', null)
+                ->whereNot('auth.user.two_factor_confirmed_at', null)
+            );
+    } catch (IncompatibleWithGoogleAuthenticatorException|InvalidCharactersException|SecretKeyTooShortException $e) {
+        Log::error($e->getMessage());
+        $this->fail('Failed to generate OTP: '.$e->getMessage());
+    }
 
 });
 

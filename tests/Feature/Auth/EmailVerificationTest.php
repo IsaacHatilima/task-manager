@@ -4,13 +4,26 @@ use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
+use Inertia\Testing\AssertableInertia as Assert;
 
 test('email verification screen can be rendered', function () {
-    $user = User::factory()->unverified()->create();
+    $user = User::factory()->unverified()->create([
+        'password' => Hash::make('Password1#'),
+    ]);
 
-    $response = $this->actingAs($user)->get('/verify-email');
+    $this->get(route('login'));
 
-    $response->assertStatus(200);
+    $this
+        ->followingRedirects()
+        ->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'Password1#',
+        ])
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('auth/verify-email')
+            ->where('auth.user.email', $user->email)
+        );
 });
 
 test('email can be verified', function () {

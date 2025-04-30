@@ -109,11 +109,11 @@ test('todo collaborators cannot be invited with missing email', function () {
     $this
         ->followingRedirects()
         ->post(route('todos.collaborators.store', $todo->id), [
-
+            'email' => '',
         ])
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('todo/collaborators')
-            ->where('errors.email', 'The email field is required.')
+            ->where('errors.email', 'Email is required')
         );
 });
