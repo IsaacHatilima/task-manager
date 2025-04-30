@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 function EnableTwoFactor() {
     const handleActivate = (): void => {
         /**
-         * Laravel password confirm returns to initial route for resubmition
-         * a seesion value is set to auto trigger the resubmit to activate 2FA
+         * Laravel password confirm returns to initial route for resubmitting
+         * a session value is set to auto trigger the resubmit to activate 2FA
          */
         sessionStorage.setItem('shouldActivate2FA', 'true'); // Flag it
         router.post('/user/two-factor-authentication'); // Will trigger password confirm

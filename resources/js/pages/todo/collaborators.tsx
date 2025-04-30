@@ -1,5 +1,17 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
@@ -120,12 +132,39 @@ function Collaborators() {
                                             <TableCell>{user.email}</TableCell>
                                             <TableCell>
                                                 {auth.user.id === todo.user.id && user.id !== todo.user.id && (
-                                                    <span
-                                                        className="cursor-pointer text-red-500 hover:text-red-700"
-                                                        onClick={() => handleDeleteTodoMember(user.id)}
-                                                    >
-                                                        Delete
-                                                    </span>
+                                                    <Dialog>
+                                                        <DialogTrigger asChild>
+                                                            <span className="cursor-pointer text-red-500 hover:text-red-700 hover:underline">
+                                                                Delete
+                                                            </span>
+                                                        </DialogTrigger>
+                                                        <DialogContent className="sm:max-w-md">
+                                                            <DialogHeader>
+                                                                <DialogTitle>Remove Collaborator?</DialogTitle>
+                                                                <DialogDescription>
+                                                                    This action cannot be undone. Are you sure you want to remove this collaborator
+                                                                    from the Todo?
+                                                                </DialogDescription>
+                                                            </DialogHeader>
+                                                            <div className="flex items-center space-x-2">
+                                                                <div className="grid flex-1 gap-2">
+                                                                    <Label htmlFor="link" className="sr-only">
+                                                                        Link
+                                                                    </Label>
+                                                                </div>
+                                                            </div>
+                                                            <DialogFooter>
+                                                                <Button variant="destructive" onClick={() => handleDeleteTodoMember(user.id)}>
+                                                                    Delete
+                                                                </Button>
+                                                                <DialogClose asChild>
+                                                                    <Button type="button" variant="secondary">
+                                                                        Close
+                                                                    </Button>
+                                                                </DialogClose>
+                                                            </DialogFooter>
+                                                        </DialogContent>
+                                                    </Dialog>
                                                 )}
                                             </TableCell>
                                         </TableRow>
