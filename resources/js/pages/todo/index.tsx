@@ -25,7 +25,7 @@ export default function Index() {
     const todoStatus: Array<string> = usePage().props.todoStatus as Array<string>;
     const statusColorMap: Record<string, string> = {
         completed: 'border-green-500 text-green-600',
-        canceled: 'border-red-500 text-red-600',
+        cancelled: 'border-red-500 text-red-600',
         pending: 'border-amber-500 text-amber-600',
         in_progress: 'border-blue-500 text-blue-600',
     };

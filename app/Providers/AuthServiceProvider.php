@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Profile;
+use App\Models\Task;
 use App\Models\Todo;
 use App\Models\TodoAccess;
 use App\Models\User;
 use App\Policies\ProfilePolicy;
+use App\Policies\TaskPolicy;
 use App\Policies\TodoAccessPolicy;
 use App\Policies\TodoPolicy;
 use App\Policies\UserPolicy;
@@ -19,6 +21,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Todo::class => TodoPolicy::class,
         TodoAccess::class => TodoAccessPolicy::class,
+        Task::class => TaskPolicy::class,
     ];
 
     /**

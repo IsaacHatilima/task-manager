@@ -9,6 +9,7 @@ use App\Actions\Todo\UpdateTodoAction;
 use App\Enums\TodoStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TodoRequest;
+use App\Models\Task;
 use App\Models\Todo;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
@@ -49,8 +50,23 @@ class TodoController extends Controller
     {
         $this->authorize('view', $todo);
 
+        $allStatuses = ['pending', 'in_progress', 'cancelled', 'completed'];
+
+        $taskCounts = collect($allStatuses)->mapWithKeys(function ($status) use ($todo) {
+            return [
+                $status => Task::where('todo_id', $todo->id)
+                    ->where('status', $status)
+                    ->count(),
+            ];
+        })->toArray();
+
         return Inertia::render('todo/todo-details', [
             'todo' => $todo->load('user'),
+            'todoTasks' => Task::where('todo_id', $todo->id)
+                ->with(['user', 'user.profile'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10),
+            'taskCounts' => $taskCounts,
             'todoStatus' => TodoStatusEnum::getValues(),
             'deletedTodoMessage' => $request->session()->get('deletedTodoMessage'),
         ]);

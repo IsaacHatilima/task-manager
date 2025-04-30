@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Profile;
+use App\Models\Task;
 use App\Models\Todo;
 use App\Models\TodoAccess;
 use App\Models\User;
@@ -33,6 +34,11 @@ class DatabaseSeeder extends Seeder
                     'todo_id' => $todo->id,
                     'user_id' => $user->id,
                     'is_owner' => true,
+                ]);
+
+                Task::factory(15)->create([
+                    'todo_id' => $todo->id,
+                    'user_id' => $user->id,
                 ]);
             });
     }

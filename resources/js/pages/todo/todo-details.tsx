@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
 import { PasswordConfirmModal } from '@/pages/auth/password-confirm-modal';
+import TaskList from '@/pages/todo/partials/task-list';
 import type { BreadcrumbItem, SharedData } from '@/types';
+import { PaginatedTask, TaskStats } from '@/types/task';
 import { Todo } from '@/types/todo';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
@@ -24,6 +25,8 @@ type TodoFormType = {
 
 function TodoDetails() {
     const todo: Todo = usePage().props.todo as Todo;
+    const tasks: PaginatedTask = usePage().props.todoTasks as PaginatedTask;
+    const taskCounts: TaskStats = usePage().props.taskCounts as TaskStats;
     const { auth } = usePage<SharedData>().props;
 
     const todoStatus: Array<string> = usePage().props.todoStatus as Array<string>;
@@ -41,7 +44,7 @@ function TodoDetails() {
 
     const statusColorMap: Record<string, string> = {
         completed: 'border-green-500 text-green-600',
-        canceled: 'border-red-500 text-red-600',
+        cancelled: 'border-red-500 text-red-600',
         pending: 'border-amber-500 text-amber-600',
         in_progress: 'border-blue-500 text-blue-600',
     };
@@ -100,7 +103,7 @@ function TodoDetails() {
                     Todo Member
                 </Button>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:min-h-[650px] md:grid-cols-2">
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center justify-between">
@@ -185,48 +188,9 @@ function TodoDetails() {
                     </form>
                 </Card>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{todo.title} Tasks</CardTitle>
-                        <CardDescription className="flex gap-3">
-                            <TodoStats statusColorMap={statusColorMap} status="pending" count="2" tooltip="Pending" />
-                            <TodoStats statusColorMap={statusColorMap} status="in_progress" count="6" tooltip="In Progress" />
-                            <TodoStats statusColorMap={statusColorMap} status="completed" count="9" tooltip="Completed" />
-                            <TodoStats statusColorMap={statusColorMap} status="canceled" count="0" tooltip="Canceled" />
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>Task list</CardContent>
-                    <CardFooter>Footer</CardFooter>
-                </Card>
+                <TaskList todo={todo} tasks={tasks} taskCounts={taskCounts} />
             </div>
         </AppLayout>
-    );
-}
-
-function TodoStats({
-    statusColorMap,
-    status,
-    count,
-    tooltip,
-}: {
-    statusColorMap: Record<string, string>;
-    status: string;
-    count: string;
-    tooltip: string;
-}) {
-    return (
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger>
-                    <Badge variant="outline" className={statusColorMap[status]}>
-                        {count}
-                    </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>{tooltip}</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
     );
 }
 

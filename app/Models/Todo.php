@@ -41,4 +41,9 @@ class Todo extends Model
     {
         return $this->belongsToMany(User::class, 'todo_accesses')->with('profile');
     }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
 }

@@ -6,7 +6,7 @@ enum TodoStatusEnum: string
 {
     case PENDING = 'pending';
     case IN_PROGRESS = 'in_progress';
-    case CANCELED = 'canceled';
+    case CANCELED = 'cancelled';
     case COMPLETED = 'completed';
 
     public static function getValues(): array
