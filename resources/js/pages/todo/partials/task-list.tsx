@@ -17,7 +17,6 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import CreateUpdateTask from '@/pages/todo/partials/create-update-task';
-import type { SharedData } from '@/types';
 import { PaginatedTask, Task, TaskFilters, TaskStats } from '@/types/task';
 import { Todo } from '@/types/todo';
 import { router, useForm, usePage } from '@inertiajs/react';
@@ -26,7 +25,6 @@ import { useEffect, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 
 export default function TaskList({ todo, taskCounts, todoStatus }: { todo: Todo; taskCounts: TaskStats; todoStatus: Array<string> }) {
-    const { auth } = usePage<SharedData>().props;
     const tasks: PaginatedTask = usePage().props.todoTasks as PaginatedTask;
     const statusColorMap: Record<string, string> = {
         completed: 'border-green-500 text-green-600',
