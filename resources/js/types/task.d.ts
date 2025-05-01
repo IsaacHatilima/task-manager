@@ -8,6 +8,7 @@ export interface Task {
     created_at: string;
     updated_at: string;
     user: User;
+    assigned: User | null;
 }
 
 export interface PaginatedTask {

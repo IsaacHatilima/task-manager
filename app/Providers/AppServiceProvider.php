@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Task;
 use App\Models\Todo;
+use App\Observers\TaskObserver;
 use App\Observers\TodoObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
@@ -27,5 +29,6 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         Todo::observe(TodoObserver::class);
+        Task::observe(TaskObserver::class);
     }
 }

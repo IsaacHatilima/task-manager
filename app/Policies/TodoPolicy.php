@@ -17,7 +17,7 @@ class TodoPolicy
 
     public function view(User $user, Todo $todo): bool
     {
-        return true;
+        return $user->hasAccessToTodo($todo);
     }
 
     public function create(User $user): bool
@@ -48,5 +48,10 @@ class TodoPolicy
     public function forceDelete(User $user, Todo $todo): bool
     {
         return $user->id === $todo->user_id;
+    }
+
+    public function canManageTaskInTodo(User $user, Todo $todo): bool
+    {
+        return $user->hasAccessToTodo($todo);
     }
 }

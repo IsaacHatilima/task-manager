@@ -52,6 +52,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(TodoAccess::class);
     }
 
+    public function hasAccessToTodo(Todo $todo): bool
+    {
+        return $this->accessibleTodos()->where('todos.id', $todo->id)->exists();
+    }
+
     public function accessibleTodos(): BelongsToMany
     {
         return $this->belongsToMany(Todo::class, 'todo_accesses');

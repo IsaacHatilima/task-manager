@@ -66,6 +66,7 @@ class TodoController extends Controller
             'todoTasks' => $listTaskAction->execute($request, $todo),
             'taskCounts' => $taskCounts,
             'todoStatus' => TodoStatusEnum::getValues(),
+            'todCollaborators' => $todo->accessibleUsers,
             'deletedTodoMessage' => $request->session()->get('deletedTodoMessage'),
             'filters' => [
                 'title' => $request->title,

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ErrorPageController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\Todo\AcceptInviteController;
 use App\Http\Controllers\Todo\CollaboratorsController;
 use App\Http\Controllers\Todo\TodoController;
@@ -20,6 +21,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/todos/{todo}/collaborators', [CollaboratorsController::class, 'store'])->name('todos.collaborators.store');
     Route::delete('/todos/{todo}/collaborators/{user}', [CollaboratorsController::class, 'destroy'])->name('todos.collaborators.destroy');
     Route::get('/invite/{todo}/{token}', [AcceptInviteController::class, 'acceptInvite'])->name('invite-accept');
+
+    Route::post('/todo-task/{todo}', [TaskController::class, 'store'])->name('todo.task.store');
+    Route::put('/todo-task/{todo}/{task}', [TaskController::class, 'update'])->name('todo.task.update');
+    Route::delete('/todo-task/{todo}/{task}', [TaskController::class, 'destroy'])->name('todo.task.destroy');
 
 });
 

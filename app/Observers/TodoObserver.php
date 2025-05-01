@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Enums\TodoStatusEnum;
 use App\Models\Todo;
 
 class TodoObserver
@@ -19,7 +20,7 @@ class TodoObserver
      */
     public function updated(Todo $todo): void
     {
-        if ($todo->isDirty('status') && in_array($todo->status, ['completed', 'cancelled'])) {
+        if ($todo->isDirty('status') && in_array($todo->status, [TodoStatusEnum::COMPLETED->value, TodoStatusEnum::CANCELLED->value])) {
             $todo->tasks()->update(['status' => $todo->status]);
         }
     }

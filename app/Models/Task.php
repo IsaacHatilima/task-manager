@@ -11,6 +11,10 @@ class Task extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $guarded = [
+        'id',
+    ];
+
     public function todo(): BelongsTo
     {
         return $this->belongsTo(Todo::class);

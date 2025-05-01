@@ -11,10 +11,14 @@ class TaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'todo_id' => ['required', 'exists:todos'],
-            'title' => ['required', 'min:3', 'max:255'],
-            'description' => ['required', 'min:3', 'max:255'],
+            'title' => ['required', 'min:3', 'max:50'],
+            'description' => ['required', 'min:3', 'max:150'],
             'status' => ['required', 'lowercase', Rule::in(TodoStatusEnum::getValues())],
+            'assigned' => [
+                'nullable',
+                'exists:users,id',
+                //                Rule::notIn([$this->user()->id]),
+            ],
         ];
     }
 

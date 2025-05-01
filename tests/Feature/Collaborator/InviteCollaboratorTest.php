@@ -60,6 +60,10 @@ test('todo collaborators can be invited', function () {
         'user_id' => $user->id,
     ]);
 
+    $todo->accesses()->create([
+        'user_id' => $user->id,
+    ]);
+
     $this->get(route('todos.collaborators.index', $todo->id));
 
     $this
@@ -101,6 +105,10 @@ test('todo collaborators cannot be invited with missing email', function () {
         );
 
     $todo = Todo::factory()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $todo->accesses()->create([
         'user_id' => $user->id,
     ]);
 

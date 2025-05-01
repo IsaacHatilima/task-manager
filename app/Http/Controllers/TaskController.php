@@ -2,43 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Task\CreateTaskAction;
+use App\Actions\Task\UpdateTaskAction;
 use App\Http\Requests\TaskRequest;
 use App\Models\Task;
+use App\Models\Todo;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 
 class TaskController extends Controller
 {
     use AuthorizesRequests;
 
-    public function store(TaskRequest $request)
+    public function store(TaskRequest $request, Todo $todo, CreateTaskAction $createTaskAction): RedirectResponse
     {
-        $this->authorize('create', Task::class);
+        $this->authorize('canManageTaskInTodo', $todo);
 
-        return Task::create($request->validated());
+        $createTaskAction->execute($request, $todo);
+
+        return back();
     }
 
-    public function show(Task $task)
+    public function update(TaskRequest $request, Todo $todo, Task $task, UpdateTaskAction $updateTaskAction): RedirectResponse
     {
-        $this->authorize('view', $task);
+        $this->authorize('canManageTaskInTodo', $todo);
 
-        return $task;
+        $updateTaskAction->execute($task, $request);
+
+        return redirect(route('todos.show', $todo->id));
     }
 
-    public function update(TaskRequest $request, Task $task)
+    public function destroy(Todo $todo, Task $task)
     {
-        $this->authorize('update', $task);
-
-        $task->update($request->validated());
-
-        return $task;
-    }
-
-    public function destroy(Task $task)
-    {
-        $this->authorize('delete', $task);
+        $this->authorize('canManageTaskInTodo', $todo);
 
         $task->delete();
 
-        return response()->json();
+        return back();
     }
 }

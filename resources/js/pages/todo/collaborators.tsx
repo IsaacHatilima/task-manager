@@ -11,7 +11,6 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
@@ -146,13 +145,6 @@ function Collaborators() {
                                                                     from the Todo?
                                                                 </DialogDescription>
                                                             </DialogHeader>
-                                                            <div className="flex items-center space-x-2">
-                                                                <div className="grid flex-1 gap-2">
-                                                                    <Label htmlFor="link" className="sr-only">
-                                                                        Link
-                                                                    </Label>
-                                                                </div>
-                                                            </div>
                                                             <DialogFooter>
                                                                 <Button variant="destructive" onClick={() => handleDeleteTodoMember(user.id)}>
                                                                     Delete

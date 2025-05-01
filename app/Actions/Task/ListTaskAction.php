@@ -13,7 +13,7 @@ class ListTaskAction
     public function execute(Request $request, Todo $todo): array
     {
         $query = Task::where('todo_id', $todo->id)
-            ->with(['user', 'user.profile']);
+            ->with(['user', 'user.profile', 'assigned', 'assigned.profile']);
 
         if ($request->filled('title')) {
             $query->where('title', 'like', '%'.$request->title.'%');

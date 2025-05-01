@@ -1,19 +1,13 @@
 <?php
 
-use App\Models\Profile;
 use App\Models\Todo;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
-test('example', function () {
-    $user = User::factory()
-        ->has(Profile::factory([
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-        ]))
-        ->create([
-            'password' => Hash::make('Password1#'),
-        ]);
+test('user can update task', function () {
+    $user = User::factory()->create([
+        'password' => Hash::make('Password1#'),
+    ]);
 
     $this->get(route('login'));
 
@@ -29,6 +23,8 @@ test('example', function () {
             ->where('auth.user.email', $user->email)
         );
 
+    $this->get(route('todos.index'));
+
     $todo = Todo::factory()->create([
         'user_id' => $user->id,
     ]);
@@ -37,23 +33,25 @@ test('example', function () {
         'user_id' => $user->id,
     ]);
 
-    $userToDelete = User::factory()
-        ->has(Profile::factory([
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-        ]))
-        ->create([
-            'password' => Hash::make('Password1#'),
-        ]);
+    $task = $todo->tasks()->create([
+        'user_id' => $user->id,
+        'title' => 'Test Task',
+        'description' => 'Test Task Description',
+        'status' => 'pending',
+    ]);
 
-    $this->get(route('todos.collaborators.index', $todo->id));
+    $this->get(route('todos.show', $todo->id));
 
     $this
         ->followingRedirects()
-        ->delete(route('todos.collaborators.destroy', ['todo' => $todo, 'user' => $userToDelete]))
+        ->delete(route('todo.task.update', ['todo' => $todo->id, 'task' => $task->id]))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
-            ->component('todo/collaborators')
+            ->component('todo/todo-details')
             ->where('errors', [])
         );
+
+    $this->assertDatabaseMissing('tasks', [
+        'id' => $task->id,
+    ]);
 });

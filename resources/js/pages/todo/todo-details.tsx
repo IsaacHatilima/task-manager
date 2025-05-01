@@ -14,7 +14,7 @@ import { TaskStats } from '@/types/task';
 import { Todo } from '@/types/todo';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useEffect } from 'react';
 import { toast } from 'sonner';
 
 type TodoFormType = {
@@ -90,6 +90,10 @@ function TodoDetails() {
         });
     };
 
+    useEffect(() => {
+        setData('status', todo.status);
+    }, [todo, setData]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Todo Details" />
@@ -100,7 +104,7 @@ function TodoDetails() {
                         router.visit(route('todos.collaborators.index', todo.id));
                     }}
                 >
-                    Todo Member
+                    View Todo Member
                 </Button>
             </div>
             <div className="grid grid-cols-1 gap-4 md:min-h-[650px] md:grid-cols-2">
@@ -167,9 +171,9 @@ function TodoDetails() {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>Status</SelectLabel>
-                                            {todoStatus.map((g) => (
-                                                <SelectItem key={g} value={g}>
-                                                    {g
+                                            {todoStatus.map((status) => (
+                                                <SelectItem key={status} value={status}>
+                                                    {status
                                                         .split('_')
                                                         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                                                         .join(' ')}
